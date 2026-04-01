@@ -201,31 +201,6 @@ cd search_vulns && pip install -r requirements.txt
 python search_vulns.py -q "OpenSSH 7.2"
 ```
 
----
-
-## 📡 Specialized Scanners — DVRs & SCADA
-
-### DVR / IoT Vulnerability PoCs
-
-> **Source:** [foggyspace/NsePocsuite-lua](https://github.com/foggyspace/NsePocsuite-lua)
-
-A collection of NSE scripts designed to detect known vulnerabilities in Digital Video Recorders (DVRs), IP cameras, and other embedded IoT devices. These devices are frequently exposed to the internet with outdated firmware, making them prime targets for botnet recruitment and surveillance compromise. Covers popular brands including Hikvision, Dahua, and generic Chinese-manufactured DVRs.
-
-```bash
-cd scripts/nse/
-git clone https://github.com/foggyspace/NsePocsuite-lua.git
-cp NsePocsuite-lua/*.nse ./
-```
-
-### SCADA & ICS Enumeration
-
-SCADA and ICS environments require specialized Nmap scripts capable of speaking industrial protocols such as Modbus, DNP3, Siemens S7, and BACnet. These scripts are included in the official Nmap distribution under the `ics` category and can be supplemented with community contributions.
-
-```bash
-nmap --script "ics-*" -p 102,502,47808 <target>
-```
-
-> ⚠️ **Warning:** Never scan operational SCADA/ICS networks without explicit, documented authorization. Even passive enumeration can disrupt critical infrastructure.
 
 ---
 
@@ -327,10 +302,6 @@ dot -Tpng topology.dot -o topology.png
 ```
 
 ### Telegram Bot Notifications
-
-> **Inspired by:** [queencitycyber/nucleiUI](https://github.com/queencitycyber/nucleiUI)
-
-Critical findings are pushed to a Telegram bot in real time — alerting security teams the moment a high-severity vulnerability is discovered. Notifications include the target host, affected service, CVE identifiers, CVSS scores, and direct links to the full report.
 
 ```yaml
 telegram:
