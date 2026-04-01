@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" fill="none">
+  <defs>
+    <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00ccff" stop-opacity="0.6"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#00ccff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#00ff88" stop-opacity="0.5"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00ff88" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="neon">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-text">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Glow background -->
+  <circle cx="60" cy="60" r="55" fill="url(#glow)"/>
+
+  <!-- Outer rings -->
+  <circle cx="60" cy="60" r="50" stroke="url(#ring)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
+  <circle cx="60" cy="60" r="37" stroke="url(#ring)" stroke-width="1" fill="none" stroke-dasharray="3 4"/>
+  <circle cx="60" cy="60" r="24" stroke="url(#ring)" stroke-width="0.8" fill="none" stroke-dasharray="2 3"/>
+
+  <!-- Cross hairs -->
+  <line x1="60" y1="10" x2="60" y2="110" stroke="#00ff88" stroke-width="0.4" opacity="0.3"/>
+  <line x1="10" y1="60" x2="110" y2="60" stroke="#00ff88" stroke-width="0.4" opacity="0.3"/>
+
+  <!-- Radar sweep -->
+  <path d="M60 60 L60 14 A46 46 0 0 1 97 37 Z" fill="url(#sweep)" opacity="0.25"/>
+  <line x1="60" y1="60" x2="60" y2="14" stroke="#00ff88" stroke-width="2" filter="url(#neon)" stroke-linecap="round"/>
+  <circle cx="60" cy="60" r="3" fill="#00ff88" filter="url(#neon)"/>
+
+  <!-- Discovered hosts (dots) -->
+  <circle cx="35" cy="30" r="3.5" fill="#00ff88" opacity="0.9" filter="url(#neon)"/>
+  <circle cx="78" cy="38" r="2.5" fill="#00ccff" opacity="0.8" filter="url(#neon)"/>
+  <circle cx="28" cy="72" r="3" fill="#ff6b6b" opacity="0.9" filter="url(#neon)"/>
+  <circle cx="85" cy="68" r="2.5" fill="#00ff88" opacity="0.7" filter="url(#neon)"/>
+  <circle cx="50" cy="88" r="2" fill="#00ccff" opacity="0.6" filter="url(#neon)"/>
+  <circle cx="92" cy="52" r="2" fill="#ffd93d" opacity="0.8" filter="url(#neon)"/>
+  <circle cx="40" cy="48" r="2" fill="#00ff88" opacity="0.5" filter="url(#neon)"/>
+
+  <!-- Connection lines between some hosts -->
+  <line x1="35" y1="30" x2="78" y2="38" stroke="#00ff88" stroke-width="0.5" opacity="0.2"/>
+  <line x1="78" y1="38" x2="92" y2="52" stroke="#00ccff" stroke-width="0.5" opacity="0.2"/>
+  <line x1="28" y1="72" x2="50" y2="88" stroke="#ff6b6b" stroke-width="0.5" opacity="0.2"/>
+
+  <!-- Text: AWESOME -->
+  <text x="128" y="58" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="38" font-weight="800" fill="#e6edf3" letter-spacing="3" filter="url(#glow-text)">
+    <tspan fill="#00ff88">A</tspan>WE<tspan fill="#00ccff">S</tspan>OME
+  </text>
+
+  <!-- Text: NMAP -->
+  <text x="128" y="95" font-family="'Courier New', 'Fira Code', monospace" font-size="38" font-weight="700" fill="#00ff88" letter-spacing="8" filter="url(#glow-text)">
+    NM<tspan fill="#00ccff">A</tspan>P
+  </text>
+
+  <!-- Accent line -->
+  <line x1="128" y1="66" x2="420" y2="66" stroke="url(#ring)" stroke-width="1" opacity="0.4"/>
+
+  <!-- Terminal cursor blink hint -->
+  <rect x="128" y="100" width="8" height="3" fill="#00ff88" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0;0.8" dur="1.2s" repeatCount="indefinite"/>
+  </rect>
+</svg>
