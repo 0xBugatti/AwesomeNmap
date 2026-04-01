@@ -25,7 +25,6 @@
 - [Alternative: Vulscan Integration](#-alternative-vulscan-integration)
 - [NSE Script Collections](#-nse-script-collections)
 - [CVE Search CLI Tools](#-cve-search-cli-tools)
-- [Specialized Scanners — DVRs & SCADA](#-specialized-scanners--dvrs--scada)
 - [Dashboard & Visualization](#-dashboard--visualization)
 - [Reporting & Notifications](#-reporting--notifications)
 
