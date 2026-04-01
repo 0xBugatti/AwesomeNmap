@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block site_content %}
+<!-- BEGIN About -->
+<div class="max-w-4xl mx-auto mt-4 px-3">
+    <div id="about_html" class="my-2">
+        {{ about_html | safe }}
+    </div>
+    <div id="modules_html" class="my-2">
+        {{ modules_html | safe }}
+    </div>
+    <div id="licenseHtml" class="my-2">
+        {{ license_html | safe }}
+    </div>
+</div>
+{% endblock %}

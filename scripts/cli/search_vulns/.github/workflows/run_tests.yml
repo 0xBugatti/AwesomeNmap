@@ -1,0 +1,65 @@
+name: 'Run Test Cases'
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout search_vulns code
+        uses: actions/checkout@v4
+
+      - name: Check if code for building resources was changed
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            build_code_changed:
+              - 'src/search_vulns/updater.py'
+
+      - name: Set up Python and Pip
+        uses: actions/setup-python@v5
+        with:
+          cache: 'pip'
+          python-version: '3.10'
+
+      - name: Upgrade Pip
+        run: python3 -m pip install --upgrade pip
+
+      - name: Install tool and build resources from source
+        if: steps.changes.outputs.build_code_changed == 'true'
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          VULNCHECK_API_KEY: ${{ secrets.VULNCHECK_API_KEY }}
+        run: |
+          pip3 install .
+          search_vulns --full-install
+          search_vulns --full-update
+      - name: Install tool and pull resources from release
+        if: steps.changes.outputs.build_code_changed == 'false'
+        run: |
+          pip3 install .
+          search_vulns -u
+
+      - name: Test CVE Completeness
+        run: python3 ./tests/test_cve_completeness.py
+
+      - name: Test CVE Attribute Completeness
+        run: python3 ./tests/test_cve_attr_completeness.py
+
+      - name: Test Exploit Completeness
+        run: python3 ./tests/test_exploit_completeness.py
+
+      - name: Test Version Comparison Correctness
+        run: python3 ./tests/test_version_comparison.py
+
+      - name: Test endoflife.date Correctness
+        run: python3 ./tests/test_eol_date.py
+
+      - name: Test GHSA Correctness
+        run: python3 ./tests/test_ghsa_completeness.py
+
+      - name: Test Vuln ID Search Correctness
+        run: python3 ./tests/test_vuln_id_search.py

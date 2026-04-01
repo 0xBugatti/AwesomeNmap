@@ -1,0 +1,13 @@
+{
+    "jquery-rails": "cpe:2.3:a:rubyonrails:jquery-rails:*:*:*:*:*:*:*:*",
+    "Microsoft\\.AspNetCore\\..*": "cpe:2.3:a:microsoft:asp.net_core:*:*:*:*:*:*:*:*",
+    "jquery-mobile": "",
+    "electron-native-notify": "",
+    "axios-http": "",
+    "pdfjs-dist": "cpe:2.3:a:mozilla:pdf.js:*:*:*:*:*:*:*:*",
+    "react-pdf": "",
+    "org\\.springframework:.*": "cpe:2.3:a:vmware:spring_framework:",
+    "import-mysql": "",
+    "mysql-koa": "",
+    "org\\.apache\\.tomcat\\..*": "cpe:2.3:a:apache:tomcat:"
+}

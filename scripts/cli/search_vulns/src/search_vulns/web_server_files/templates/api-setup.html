@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block site_content %}
+<!-- BEGIN API Setup -->
+<div class="xs:max-w-full sm:max-w-5xl mx-auto mt-4 px-3">
+    <div class="text-center font-bold">
+        <h2 class="text-3xl">API (Setup)</h2>
+    </div>
+    {% if show_captcha == true %}
+    <div class="mt-4">
+        search_vulns offers an API that enables you to programmatically search for vulnerabilties in software.
+        To use the API, you need to generate an API key and use this key with your requests. Furthermore, you
+        can set up an API key to use with the web interface, enabling you to bypass the CAPTCHA mechanism.
+    </div>
+    <div class="text-center mt-4">
+        <h3 class="text-xl font-bold">Generate an API Key</h3>
+    </div>
+    <div class="mt-2 text-center">
+        <div class="flex justify-center">
+            <div class="hidden g-recaptcha justify-center self-center items-center" id="grecaptcha"
+                data-sitekey="{{ recaptcha_site_key }}"></div>
+        </div>
+        <div class="mt-3" id="genKeyButton">
+            <button class="btn btn-primary" onclick="generateAPIKey()">Generate API Key</button>
+        </div>
+        <div class="mt-3" id="genTokenResponse">
+        </div>
+    </div>
+    <div class="text-center mt-5">
+        <h3 class="text-xl font-bold">Configure an API Key for Use in This Browser</h3>
+    </div>
+    <div class="mt-1">
+        <div class="mt-3 flex flex-wrap justify-center gap-4">
+            <div class="w-full sm:w-104">
+                <label class="input input-bordered flex items-center gap-2 w-full">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="text" class="grow" placeholder="Enter your API key" id="config-api-key" />
+                </label>
+            </div>
+            <div class="flex justify-center gap-2">
+                <button class="btn btn-success" onclick="saveAPIKeyInBrowser()">Save Key in Browser</button>
+                <button class="btn btn-error" onclick="deleteAPIKeyFromBrowser()">Clear Saved Key</button>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-5">
+        <h3 class="text-xl font-bold">API Documentation</h3>
+    </div>
+    <div class="mt-1">
+        You can check out search_vulns' OpenAPI specification <a class="link link-primary" href="/api/docs"
+            target="_blank">here</a>.
+        The app's frontend uses all API endpoints, meaning you can observe how they work there as well.
+        When making requests to the API, you should include your key via an <code class="text-sm">API-Key</code> header,
+        e.g. <code class="text-sm bg-base-300 p-1 rounded">API-Key: test</code>.
+    </div>
+    <div class="text-center mt-5">
+        <h3 class="text-xl font-bold">Check Status of API Key</h3>
+    </div>
+    <div class="mt-1">
+        <div class="mt-3 flex flex-wrap justify-center gap-4">
+            <div class="w-full sm:w-104">
+                <label class="input input-bordered flex items-center gap-2 w-full">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="text" class="grow" id="check-api-key" placeholder="Enter your API key" />
+                </label>
+            </div>
+            <div class="flex justify-center gap-2">
+                <button class="btn btn-primary" onclick="checkAPIKeyStatus()">Check Key Status</button>
+                <button class="btn btn-secondary" onclick="checkCurrentAPIKeyStatus()">Check Current Key
+                    Status</button>
+            </div>
+        </div>
+        <div class="mt-2 text-center" id="check-api-key-result">
+        </div>
+    </div>
+    <div class="text-center mt-5">
+        <h3 class="text-xl font-bold">Check search_vulns Version</h3>
+    </div>
+    <div class="flex mt-2 mb-8 flex justify-center" id="search-vulns-version-content">
+    </div>
+    {% else %}
+    <h5 class="mt-3 text-warning w-full text-center">CAPTCHA and API management is not enabled server-side.</h5>
+    {% endif %}
+</div>
+<div class="w-full fixed bottom-0 left-0" id="alert-container">
+</div>
+{% endblock %}
+
+{{ show_captcha }}
+{% block custom_js %}
+{% if show_captcha == true %}
+<script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoaded" async defer></script>
+{% endif %}
+<script src="{{ url_for('static', filename='js/search_vulns_api.js') }}"></script>
+{% endblock %}

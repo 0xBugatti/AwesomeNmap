@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block site_content %}
+<!-- BEGIN News -->
+<div class="xs:max-w-4xl sm:max-w-3xl mx-auto mt-4 px-3">
+    <div id="newsHtml">
+        {{ news_html | safe }}
+    </div>
+</div>
+{% endblock %}

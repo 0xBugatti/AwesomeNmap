@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+
+import unittest
+
+from search_vulns.core import search_vulns
+from search_vulns.models.Severity import SeverityType
+
+
+class TestSearches(unittest.TestCase):
+
+    def test_search_cve_ghsa_ids1(self):
+        self.maxDiff = None
+        query = "CVE-2024-27286, GHSA-hfjr-m75m-wmh7, CVE-2024-12345678"
+        result = search_vulns(query)
+        expected_vulns = {
+            "CVE-2024-27286": {
+                "published": "2024-03-20 20:15:08",
+                "cvss_ver": "3.1",
+                "cvss": "6.5",
+                "cvss_vec": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+                "cisa_kev": False,
+            },
+            "CVE-2024-12345678": {
+                "published": None,
+                "cvss_ver": "-1.0",
+                "cvss": "-1.0",
+                "cvss_vec": "n/a",
+                "cisa_kev": False,
+            },
+            "GHSA-hfjr-m75m-wmh7": {
+                "published": "2022-05-24 16:59:38",
+                "cvss_ver": "3.1",
+                "cvss": "7.8",
+                "cvss_vec": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H",
+                "cisa_kev": False,
+            },
+        }
+
+        self.assertEqual(set(expected_vulns.keys()), set(result.vulns.keys()))
+
+        for vuln_id, vuln in result.vulns.items():
+            self.assertIn(vuln_id, expected_vulns)
+            self.assertEqual(
+                vuln.serialize_dates(vuln.published), expected_vulns[vuln_id]["published"]
+            )
+            if SeverityType.CVSS in vuln.severity:
+                self.assertEqual(
+                    vuln.severity[SeverityType.CVSS].version,
+                    expected_vulns[vuln_id]["cvss_ver"],
+                )
+                self.assertEqual(
+                    vuln.severity[SeverityType.CVSS].score, expected_vulns[vuln_id]["cvss"]
+                )
+                self.assertEqual(
+                    vuln.severity[SeverityType.CVSS].vector, expected_vulns[vuln_id]["cvss_vec"]
+                )
+            else:
+                self.assertTrue(expected_vulns[vuln_id]["cvss"] == "-1.0")
+            self.assertEqual(
+                vuln.cisa_kev,
+                expected_vulns[vuln_id]["cisa_kev"],
+            )
+
+    def test_search_cve_ghsa_ids2(self):
+        self.maxDiff = None
+        # GHSA-6c3j-c64m-qhgq should be deduplicated to CVE-2019-11358
+        query = (
+            "CVE-2015-9251 ;;asd GHSA-6c3j-c64m-qhgq iuhnd CVE-2019-11358 .121w CVE-2007-2379"
+        )
+        result = search_vulns(query)
+        expected_vulns = {
+            "CVE-2015-9251": {
+                "published": "2018-01-18 23:29:00",
+                "cvss_ver": "3.0",
+                "cvss": "6.1",
+                "cvss_vec": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+                "cisa_kev": False,
+                "aliases": {
+                    "CVE-2015-9251": "https://nvd.nist.gov/vuln/detail/CVE-2015-9251",
+                    "GHSA-rmxg-73gg-4p98": "https://github.com/advisories/GHSA-rmxg-73gg-4p98",
+                },
+            },
+            "CVE-2019-11358": {
+                "published": "2019-04-20 00:29:00",
+                "cvss_ver": "3.1",
+                "cvss": "6.1",
+                "cvss_vec": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+                "cisa_kev": False,
+                "aliases": {
+                    "CVE-2019-11358": "https://nvd.nist.gov/vuln/detail/CVE-2019-11358",
+                    "GHSA-6c3j-c64m-qhgq": "https://github.com/advisories/GHSA-6c3j-c64m-qhgq",
+                },
+            },
+            "CVE-2007-2379": {
+                "published": "2007-04-30 23:19:00",
+                "cvss_ver": "2.0",
+                "cvss": "5.0",
+                "cvss_vec": "AV:N/AC:L/Au:N/C:P/I:N/A:N",
+                "cisa_kev": False,
+                "aliases": {"CVE-2007-2379": "https://nvd.nist.gov/vuln/detail/CVE-2007-2379"},
+            },
+        }
+        self.assertEqual(set(expected_vulns.keys()), set(result.vulns.keys()))
+        for vuln_id, vuln in result.vulns.items():
+            self.assertIn(vuln_id, expected_vulns)
+            self.assertEqual(
+                vuln.serialize_dates(vuln.published), expected_vulns[vuln_id]["published"]
+            )
+            if SeverityType.CVSS in vuln.severity:
+                self.assertEqual(
+                    vuln.severity[SeverityType.CVSS].version,
+                    expected_vulns[vuln_id]["cvss_ver"],
+                )
+                self.assertEqual(
+                    vuln.severity[SeverityType.CVSS].score, expected_vulns[vuln_id]["cvss"]
+                )
+                self.assertEqual(
+                    vuln.severity[SeverityType.CVSS].vector, expected_vulns[vuln_id]["cvss_vec"]
+                )
+            else:
+                self.assertTrue(expected_vulns[vuln_id]["cvss"] == "-1.0")
+            self.assertEqual(
+                vuln.cisa_kev,
+                expected_vulns[vuln_id]["cisa_kev"],
+            )
+            self.assertEqual(vuln.aliases, expected_vulns[vuln_id]["aliases"])
+
+
+if __name__ == "__main__":
+    unittest.main()

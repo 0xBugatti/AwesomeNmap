@@ -1,0 +1,15 @@
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+categories:
+  - title: "Features"
+    label: type/feature
+  - title: "Bug Fixes"
+    label: type/bug
+  - title: "Other"
+    label: type/other
+change-template: "- $URL: $TITLE"
+change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+template: |
+  ## Changes
+
+  $CHANGES

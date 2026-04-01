@@ -1,0 +1,302 @@
+/* Variables */
+
+
+
+:root {
+    --cvss-badge-text-color: rgb(49, 50, 51);
+    --cvss-badge-text-color-uncertain: rgb(49, 50, 51, 0.75);
+    --cvss-badge-bg-color-critical: rgb(225, 114, 225);
+    --cvss-badge-bg-color-critical-uncertain: rgb(225, 114, 225, 0.75);
+    --cvss-badge-bg-color-high: rgb(255, 117, 117);
+    --cvss-badge-bg-color-high-uncertain: rgb(255, 117, 117, 0.75);
+    --cvss-badge-bg-color-medium: rgb(253, 205, 114);
+    --cvss-badge-bg-color-medium-uncertain: rgb(253, 205, 114, 0.75);
+    --cvss-badge-bg-color-low: rgb(255, 255, 162);
+    --cvss-badge-bg-color-low-uncertain: rgb(255, 255, 162, 0.75);
+    --cvss-badge-bg-color-na: rgb(150, 150, 150);
+    --cvss-badge-bg-color-na-uncertain: rgb(150, 150, 150, 0.75);
+    --color-expl: 0.5374 0.21482051691771167 14.844751311489949;
+}
+
+@supports not (color: oklch(0 0 0)) {
+    :root {
+        --fallback-color-expl: #cc0044;
+    }
+}
+
+
+/* Styled vulnerability table row (adapted from DaisyUI CSS) */
+.exploited-vuln-bg {
+    background-color: var(--fallback-color-expl, oklch(var(--color-expl)/0.15));
+}
+
+.text-exploited {
+    color: oklch(var(--color-expl));
+}
+
+.bg-exploited {
+    background-color: oklch(var(--color-expl)) / 0.15;
+}
+
+.vuln-flag-icon {
+    font-size: 0.95rem;
+}
+
+
+/* Vuln CVSS badges */
+.badge-cvss {
+    color: var(--cvss-badge-text-color);
+}
+
+.badge-critical>.badge {
+    background-color: var(--cvss-badge-bg-color-critical);
+}
+.badge-critical.uncertain-vuln>.badge {
+    background-color: var(--cvss-badge-bg-color-critical-uncertain);
+}
+.badge-critical>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-critical);
+}
+.badge-critical.uncertain-vuln>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-critical-uncertain);
+}
+
+.badge-high>.badge {
+    background-color: var(--cvss-badge-bg-color-high);
+}
+.badge-high.uncertain-vuln>.badge {
+    background-color: var(--cvss-badge-bg-color-high-uncertain);
+}
+.badge-high>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-high);
+}
+.badge-high.uncertain-vuln>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-high-uncertain);
+}
+
+
+.badge-medium>.badge {
+    background-color: var(--cvss-badge-bg-color-medium);
+}
+.badge-medium.uncertain-vuln>.badge {
+    background-color: var(--cvss-badge-bg-color-medium-uncertain);
+}
+.badge-medium>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-medium);
+}
+.badge-medium.uncertain-vuln>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-medium-uncertain);
+}
+
+.badge-low>.badge {
+    background-color: var(--cvss-badge-bg-color-low);
+}
+.badge-low.uncertain-vuln>.badge {
+    background-color: var(--cvss-badge-bg-color-low-uncertain);
+}
+.badge-low>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-low);
+}
+.badge-low.uncertain-vuln>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-low-uncertain);
+}
+
+.badge-na>.badge {
+    background-color: var(--cvss-badge-bg-color-na);
+}
+.badge-na.uncertain-vuln>.badge {
+    background-color: var(--cvss-badge-bg-color-na-uncertain);
+}
+.badge-na>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-na);
+}
+.badge-na.uncertain-vuln>.dropdown-content {
+    border: 1px solid var(--cvss-badge-bg-color-na-uncertain);
+}
+
+
+/* Rounded table */
+
+.table-rounded thead tr th:first-child {
+    border-radius: 0.8rem 0 0 0;
+}
+
+.table-rounded thead tr th:last-child {
+    border-radius: 0 0.8rem 0 0;
+}
+
+.table-rounded thead tr th:first-child:last-child {
+    border-radius: 0.8rem 0.8rem 0 0;
+}
+
+.table-rounded tr:last-child td:first-child {
+    border-radius: 0 0 0 0.8rem;
+}
+
+.table-rounded tr:last-child td:last-child {
+    border-radius: 0 0 0.8rem 0;
+}
+
+.table-rounded tr:last-child td:first-child:last-child {
+    border-radius: 0 0 0.8rem 0.8rem;
+}
+
+/* Overwrite Tailwind striping for styled-vuln table row */
+.sv-vuln-table-zebra {
+    @layer daisyui.l1.l2 {
+        tbody {
+            tr {
+                &:where(:nth-child(even):not(.uncertain-vuln):not(.exploited-vuln):not(.patched-vuln)) {
+                    background-color: var(--color-base-200);
+
+                    :where(.table-pin-cols tr th) {
+                        background-color: var(--color-base-200);
+                    }
+                }
+
+                &.row-hover {
+                    &,
+                    &:where(:nth-child(even):not(.uncertain-vuln):not(.exploited-vuln):not(.patched-vuln)) {
+                        &:hover {
+                            @media (hover: hover) {
+                                background-color: var(--color-base-300);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.table-mdsm {
+    @layer daisyui.l1.l2 {
+        :not(thead, tfoot) tr {
+            font-size: 0.85rem;
+        }
+
+        :where(th, td) {
+            padding-inline: calc(0.2rem * 3);
+            padding-block: calc(0.2rem * 2);
+        }
+    }
+}
+
+
+/* Force hover on menu item (copied from DaisyUI menu-focus with higher transparency) */
+.my-menu-item-hover {
+    /* use !important to overwrite DaisyUI mouse hover styling */
+    cursor: pointer;
+    background-color: var(--color-base-content);
+
+    @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-base-content) 18%, transparent);
+    }
+
+    color: var(--color-base-content);
+    --tw-outline-style: none;
+    outline-style: none;
+
+    @media (forced-colors: active) {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+    }
+}
+
+/* reCAPTCHA v2 box remove white border */
+.g-recaptcha {
+    overflow: hidden;
+    width: 302px;
+    height: 76px;
+}
+
+/* Smaller button */
+.btn-circle:where(.btn-xxs) {
+    height: 1.2rem;
+    width: 1.2rem;
+    border-radius: 9999px;
+    padding: 0px;
+}
+
+.btn-xxs {
+    height: 1.2rem;
+    min-height: 1.2rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    font-size: 0.7rem;
+}
+
+.btn-square:where(.btn-xxs) {
+    height: 1.2rem;
+    width: 1.2rem;
+    padding: 0px;
+}
+
+.btn-copy-md {
+    height: 1.4rem;
+    min-height: 1.4rem;
+}
+
+/* misc */
+.text-smxs {
+    font-size: 0.825rem;
+    line-height: 1.125rem;
+}
+
+.text-mdsm {
+    font-size: 0.938rem;
+    line-height: calc(1.375 / 0.938);
+}
+
+/* Version badge sizes mobile and desktop */
+.text-version-badge {
+    font-size: 0.825rem;
+    line-height: 1.5rem;
+}
+@media (max-width: 639px) {
+    .text-version-badge {
+        font-size: 0.675rem;
+        line-height: 1.1rem;
+    }
+}
+
+.dont-break-out {
+    /* from https://stackoverflow.com/a/50777367 */
+    /* These are technically the same, but use both */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+
+    -ms-word-break: break-all;
+    /* This is the dangerous one in WebKit, as it breaks things wherever */
+    word-break: break-all;
+    /* Instead use this non-standard one: */
+    word-break: break-word;
+}
+
+/* Vertical scrollbar styles for WebKit browsers (Chrome, Safari) */
+.overflow-y-auto::-webkit-scrollbar {
+    width: 0.45rem !important;
+    /* Width for the vertical scrollbar */
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    border-radius: 0.2rem !important;
+    background: transparent;
+    /* Transparent background to simulate margin */
+    margin-top: 0.55rem;
+    /* Adjust to desired top margin */
+    margin-bottom: 0.55rem;
+    /* Adjust to desired bottom margin */
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    border-radius: 0.5rem !important;
+    background-color: oklch(var(--bc)) !important;
+    box-shadow: inset 0 0 0 0.55rem;
+    /* Simulate the margin with shadow */
+}
+
+/* Recaptcha Badge Position */
+.grecaptcha-badge {
+    bottom: 50px !important;   /* move it up */
+}

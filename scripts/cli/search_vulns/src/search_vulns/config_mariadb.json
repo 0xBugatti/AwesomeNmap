@@ -1,0 +1,43 @@
+{
+    "DATABASE_CONNECTION": {
+        "TYPE": "mariadb",
+        "HOST": "localhost",
+        "USER": "search_vulns",
+        "PASSWORD": "",
+        "PORT": 3306
+    },
+    "VULN_DATABASE": {
+        "NAME": "vulndb"
+    },
+    "PRODUCT_DATABASE": {
+        "NAME": "productdb"
+    },
+    "RECAPTCHA_AND_API": {
+        "ENABLED": false,
+        "SITE_KEY_V3": "<YOUR_SITE_KEY_V3>",
+        "SECRET_KEY_V3": "<YOUR_SECRET_KEY_V3>",
+        "SITE_KEY_V2": "<YOUR_SITE_KEY_V2>",
+        "SECRET_KEY_V2": "<YOUR_SECRET_KEY_V2>",
+        "API_REQUESTS_RATE_LIMIT_WINDOW": 300,
+        "API_REQUESTS_RATE_LIMIT_COUNT": 60,
+        "DATABASE_NAME": "search_vulns_api"
+    },
+    "MODULES": {
+        "cpe_search.search_vulns_cpe_search": {
+            "NVD_API_KEY": "",
+            "CPE_SEARCH_COUNT": 10,
+            "CPE_SEARCH_THRESHOLD": 0.67
+        },
+        "nvd.search_vulns_nvd": {
+            "NVD_API_KEY": ""
+        },
+        "vulncheck.search_vulns_nvdpp": {
+            "VULNCHECK_API_KEY": ""
+        }
+    },
+    "MODULES_DATA_PREFERENCE": [
+        "product_specific.search_vulns_mssql",
+        "nvd.search_vulns_nvd",
+        "vulncheck.search_vulns_nvdpp"
+    ]
+}

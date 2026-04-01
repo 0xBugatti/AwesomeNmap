@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{{ $ftColor := "#121212" }}
+		{{ $bgColor := "#eee" }}
+		{{ if .OutputOptions.HTMLOptions.DarkMode }}
+			{{ $ftColor = "#eee" }}
+			{{ $bgColor = "#121212" }}
+		{{ end }}
+		<title>NMAP Scan result: {{ .NMAPRun.StartStr }}</title>
+		<meta charset="utf-8">
+		<style>
+			body {
+				color: {{ $ftColor }};
+				background-color: {{ $bgColor }};
+				font-family: -apple-system,Helvetica,"Segoe UI Symbol";
+			}
+			{{ if .OutputOptions.HTMLOptions.FloatingContentsTable }}
+			#toc {
+				position: fixed;
+				top: 20px;
+				right: 0;
+				margin-right: 5px;
+				z-index: 1000;
+				max-height: 780px;
+				max-width: 250px;
+				overflow: auto;
+				background-color: {{ $bgColor }};
+			}
+			{{ end }}
+			table {
+				border-spacing: 0;
+			}
+			#summary-table {
+				table-layout: fixed;
+				width: 640px;
+			}
+			#summary-table > tbody > tr > th {
+				text-align: left;
+			}
+			.data-table {
+				width: 80%;
+				border: 1px solid #404040;
+			}
+			.data-table > thead > tr > th {
+				text-align: left;
+				border-bottom: 1px solid #404040;
+				border-right: 1px solid #404040;
+			}
+			.data-table > tbody > tr > th {
+				padding-right: 40px;
+			}
+			.data-table > tbody > tr > td {
+				border-bottom: 1px solid #404040;
+			}
+			.data-table > tbody > tr > td > pre {
+				white-space: pre-wrap;
+				word-break: break-word;
+			}
+			.data-table > tbody > tr > td > ul {
+				padding-left: 0;
+			}
+			.address-info-table > tbody > tr > th {
+				text-align: left;
+				padding-right: 40px;
+			}
+			.address-info-table > tbody > tr > td > ul {
+				padding-left: 0;
+			}
+			.port-table > tbody > tr > td.port-open {
+				background-color: rgba(54, 182, 14, 0.18);
+				border-color: rgba(62, 198, 16, 0.3);
+			}
+			.port-table > tbody > tr > td.port-closed {
+				background-color: rgba(182, 2, 5, 0.18);
+				border-color: rgba(253, 155, 157, 0.3);
+			}
+			.port-table > tbody > tr > td.port-filtered {
+				background-color: rgba(217, 63, 11, 0.18);
+				border-color: rgba(247, 136, 100, 0.3);
+			}
+			.metrics-table > thead > tr > th {
+				text-align: left;
+			}
+			table td {
+				word-wrap: break-word;
+				padding-right: 10px;
+			}
+			a {
+				color: #539bf5;
+			}
+			hr {
+				color: #404040;
+				border-style: solid;
+			}
+			.host-address-header.host-up {
+				background-color: rgba(54, 182, 14, 0.18);
+				border-color: rgba(62, 198, 16, 0.3);
+			}
+			.host-address-header.host-down {
+				background-color: rgba(182, 2, 5, 0.18);
+				border-color: rgba(253, 155, 157, 0.3);
+			}
+		</style>
+	</head>
+	<body>
+		{{ $skipTOC := .OutputOptions.HTMLOptions.SkipTOC }}
+		{{ $skipHeader := .OutputOptions.HTMLOptions.SkipHeader }}
+		{{ $skipSummary := .OutputOptions.HTMLOptions.SkipSummary }}
+		{{ $skipTraceroute := .OutputOptions.HTMLOptions.SkipTraceroute }}
+		{{ $skipMetrics := .OutputOptions.HTMLOptions.SkipMetrics }}
+		{{ $skipPortScripts := .OutputOptions.HTMLOptions.SkipPortScripts }}
+		{{- if not $skipHeader }}
+		<h1>NMAP Scan Result: {{ .NMAPRun.StartStr }}</h1>
+		<hr>
+		{{- end }}{{/* if not $skipHeader */}}
+		{{ if not $skipTOC }}
+		<div id="toc">
+			<h2>Table of contents:</h2>
+			<ul>
+				{{ if not $skipSummary }}<li><a href="#scan-summary">Scan Summary</a></li>{{ end }}
+				{{ range $index, $value := .NMAPRun.Host }}
+				<li><a href="#{{ $index }}">{{ .JoinedAddresses "/" }}{{ range .HostNames.HostName }} / {{ .Name }}{{ end }}</a> ({{ .Status.State }})</li>
+				{{ end }}{{/* range .Host */}}
+			</ul>
+			<hr>
+		</div>
+		{{ end }}{{/* if not $skipTOC */}}
+		{{ if not $skipSummary }}
+		<a id="scan-summary"></a>
+		<h2>Scan Summary:</h2>
+		<table id="summary-table">
+			<tbody>
+				<tr>
+					<th>Scanner</th>
+					<td>{{ .NMAPRun.Scanner }}</td>
+				</tr>
+				<tr>
+					<th>Start time</th>
+					<td>{{ .NMAPRun.StartStr }}</td>
+				</tr>
+				<tr>
+					<th>Finished</th>
+					<td>{{ .NMAPRun.RunStats.Finished.TimeStr }}</td>
+				</tr>
+				<tr>
+					<th>Elapsed</th>
+					<td>{{ .NMAPRun.RunStats.Finished.Elapsed }}</td>
+				</tr>
+				<tr>
+					<th>Version</th>
+					<td>{{ .NMAPRun.Version }}</td>
+				</tr>
+				<tr>
+					<th>Type of scan</th>
+					<td>{{ .NMAPRun.ScanInfo.Type }}</td>
+				</tr>
+				<tr>
+					<th>Protocol</th>
+					<td>{{ .NMAPRun.ScanInfo.Protocol }}</td>
+				</tr>
+				<tr>
+					<th>Number of services</th>
+					<td>{{ .NMAPRun.ScanInfo.NumServices }}</td>
+				</tr>
+				<tr>
+					<th>Services</th>
+					<td>
+						<details>
+							<summary>(open)</summary>
+							{{ .NMAPRun.ScanInfo.Services }}
+						</details>
+					</td>
+				</tr>
+				<tr>
+					<th>Arguments</th>
+					<td><pre>{{ .NMAPRun.Args }}</pre></td>
+				</tr>
+				<tr>
+					<th>Verbosity</th>
+					<td>{{ .NMAPRun.Verbose.Level }}</td>
+				</tr>
+				<tr>
+					<th>Debug</th>
+					<td>{{ .NMAPRun.Debugging.Level }}</td>
+				</tr>
+				<tr>
+					<th>Exit (success)</th>
+					<td>{{ .NMAPRun.RunStats.Finished.Exit }}</td>
+				</tr>
+				<tr>
+					<th>Summary</th>
+					<td>{{ .NMAPRun.RunStats.Finished.Summary }}</td>
+				</tr>
+				<tr>
+					<th>Hosts</th>
+					<td>Up: {{ .NMAPRun.RunStats.Hosts.Up }}, Down: {{ .NMAPRun.RunStats.Hosts.Down }}, Total: {{ .NMAPRun.RunStats.Hosts.Total }}</td>
+				</tr>
+			</tbody>
+		</table>
+		{{ end }}{{/* if not $skipSummary */}}
+		{{ if .CustomOptions }}
+		<h2>Custom Options</h2>
+		<table class="data-table">
+			<thead>
+				<th>Key</th>
+				<th>Value</th>
+			</thead>
+			<tbody>
+			{{ range $key, $value := .CustomOptions -}}
+				<tr>
+					<td>{{ $key }}</td>
+					<td><pre>{{ $value }}</pre></td>
+				</tr>
+			{{ end }}
+			</tbody>
+		</table>
+		{{ end }}{{/* if .CustomOptions */}}
+		<hr>
+		{{ range $index, $value := .NMAPRun.Host }}
+		<a id="{{ $index }}"></a>
+		<h2 class="host-address-header{{ if .Status.IsUp }} host-up{{ else }} host-down{{ end }}">
+		{{ .JoinedAddresses "/" }}{{ range .HostNames.HostName }} / {{ .Name }}{{ end }} {{ if .Status.IsUp }}(up){{ else }}(down){{ end }}
+		</h2>
+		{{ if eq .Status.State "up" }}
+		<h3>Info:</h3>
+		<table class="address-info-table">
+			<tbody>
+				<tr>
+					<th>Address</th>
+					<td>
+						<ul>
+							{{ range .HostAddress }}
+							<li>{{ .Address }} ({{ .AddressType }})</li>
+							{{ end }}
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<th>Hostnames</th>
+					<td>
+						{{ if .HostNames.HostName }}
+						<ul>
+						{{ range .HostNames.HostName }}
+							<li>{{ .Name }} ({{ .Type }})</li>
+						{{ end }}
+						</ul>
+						{{ else }}
+						N/A
+						{{ end }}
+					</td>
+				</tr>
+				{{ if .OS }}
+				<tr>
+					<th>Remote OS Detection</th>
+					<td>
+						<ul>
+						{{ range .OS.OSPortUsed }}
+						<li>Used port: <strong>{{ .PortID }}/{{ .Protocol }} ({{ .State }})</strong></li>
+						{{ end }}
+						{{ range .OS.OSMatch }}
+						<li>OS: <strong>{{ .Name }} ({{ .Accuracy }}%)</strong></li>
+						{{ else }}
+						<li>OS: N/A</li>
+						{{ end }}
+						</ul>
+					</td>
+				</tr>
+				{{ end }}
+			</tbody>
+		</table>
+		<h3>Ports</h3>
+		<table class="port-table data-table">
+			<thead>
+				<tr>
+					<th colspan="2">Port</th>
+					<th>State</th>
+					<th>Service</th>
+					<th>Reason</th>
+					<th>Product</th>
+					<th>Version</th>
+					<th>Extra info</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{ range .Port }}
+				<tr>
+					<td class="port-{{ .State.State }}">{{ .PortID }}</td>
+					<td class="port-{{ .State.State }}">{{ .Protocol }}</td>
+					<td>{{ .State.State }}</td>
+					<td>{{ .Service.Name }}</td>
+					<td>{{ .State.Reason }}</td>
+					<td>{{ .Service.Product }}</td>
+					<td>{{ .Service.Version }}</td>
+					<td>{{ .Service.ExtraInfo }}</td>
+				</tr>
+				{{ if and (.Script) (not $skipPortScripts) }}
+				{{ range .Script }}
+				<tr>
+					<td></td>
+					<td>{{ .ID }}</td>
+					<td colspan="6"><pre>{{- .Output -}}</pre></td>
+				</tr>
+				{{ end }}{{/* range .Script */}}
+				{{ end }}{{/* if and (.Script) (not $skipPortScripts) */}}
+				{{ end }}{{/* range .Port */}}
+			</tbody>
+		</table>
+		{{ if and (.Trace) (not $skipTraceroute) }}
+		<h3>Traceroute Information</h3>
+		{{ if .Trace.Hops }}
+		<details>
+			<summary>(open) Generated traceroute data {{ if .Trace.Port }}using {{ .Trace.Port }}{{ if .Trace.Protocol }}/{{ .Trace.Protocol }}{{ end }}{{ end }}</summary>
+			<table class="trace-table data-table">
+				<thead>
+					<tr>
+						<th>Hop</th>
+						<th>Rtt</th>
+						<th>IP</th>
+						<th>Host</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{ range .Trace.Hops }}
+					<tr>
+						<td>{{ .TTL }}</td>
+						<td>{{ .RTT }}</td>
+						<td>{{ .IPAddr }}</td>
+						<td>{{ .Host }}</td>
+					</tr>
+					{{ end }}{{/* range .Trace.Hops */}}
+				</tbody>
+			</table>
+		</details>
+		{{ else }}
+		No traceroute information.
+		{{ end }}{{/* if .Trace.Hops */}}
+		{{ end }}{{/* if and (.Trace) (not $skipTraceroute) */}}
+		{{ if not $skipMetrics }}
+		<h3>Misc Metrics</h3>
+		<details>
+			<summary>(open)</summary>
+			<table class="metrics-table">
+				<thead>
+					<tr>
+						<th>Metric</th>
+						<th>Value</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Ping Results</td>
+						<td>{{ if .Status.Reason }}{{ .Status.Reason }}{{ else }}N/A{{ end }}</td>
+					</tr>
+					<tr>
+						<td>System Uptime</td>
+						<td>{{ if .Uptime.Seconds }}{{ .Uptime.Seconds }} (last boot: {{ .Uptime.LastBoot }}){{ else }}N/A{{ end }}</td>
+					</tr>
+					<tr>
+						<td>Network Distance</td>
+						<td>{{ if .Distance.Value }}{{ .Distance.Value }}{{ else }}N/A{{ end }}</td>
+					</tr>
+					<tr>
+						<td>TCP Sequence Prediction</td>
+						<td>{{ if .TCPSequence.Difficulty }}{{ .TCPSequence.Difficulty }}<pre>{{ .TCPSequence.Values }}</pre>{{ else }}N/A{{ end }}</td>
+					</tr>
+					<tr>
+						<td>IP ID Sequence Generation</td>
+						<td>{{ if .IPIDSequence.Class }}{{ .IPIDSequence.Class }}<pre>{{ .IPIDSequence.Values }}</pre>{{ else }}N/A{{ end }}</td>
+					</tr>
+					<tr>
+						<td>TCP TS Sequence</td>
+						<td>{{ if .TCPTSSequence.Class }}{{ .TCPTSSequence.Class }}<pre>{{ .TCPTSSequence.Values }}</pre>{{ else }}N/A{{ end }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</details>
+		{{ end }}{{/* if not $skipMetrics */}}
+		<hr>
+		{{ end }}{{/* if eq .Status.State "up" */}}
+		{{ end }}{{/* range .Host */}}
+	</body>
+</html>

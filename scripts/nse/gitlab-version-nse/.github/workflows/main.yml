@@ -1,0 +1,27 @@
+name: "Update GitLab hashes dictionary"
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 5 * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Process missing tags
+        working-directory: ./automation
+        run: |
+          python get_gitlab_hashes.py ../gitlab_hashes.json
+      - uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: automatic update

@@ -1,0 +1,31 @@
+name: "Update MS Exchange versions dictionary"
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 5 * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Install python deps
+        run: pip install lxml requests looseversion
+      - name: Crawl versions and create dictionary
+        working-directory: ./automation
+        run: |
+          python parse_exchange_versions.py ../ms-exchange-versions-dict.json ../ms-exchange-unique-versions-dict.json
+          python update_main_exchange_versions_cves.py ../ms-exchange-unique-versions-dict.json ../ms-exchange-versions-cves-dict.json
+          python update_patches_exchange_versions_cves.py ../ms-exchange-versions-dict.json ../ms-exchange-versions-cves-dict.json
+          python process_ms_cve_security_advisories_cves.py ../ms-exchange-versions-cves-dict.json
+      - uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: automatic update
