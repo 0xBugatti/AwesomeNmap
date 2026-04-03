@@ -312,6 +312,14 @@ xsltproc -o scan_out.html nmap-dashboard.xsl outscan.xml
 <img src=".github/dash-command.jpg" width="700" alt="Dashboard HTML Report Generation" />
 </div>
 
+<div align="center">
+<img src=".github/dash-main.jpg" width="700" alt="Dashboard Overview" />
+</div>
+
+<div align="center">
+<img src=".github/dash-sub.png" width="700" alt="Dashboard Host Details" />
+</div>
+
 ### Graphviz Network Graphs
 
 > **Source:** [vdjagilev/nmap-formatter](https://github.com/vdjagilev/nmap-formatter?tab=readme-ov-file)
